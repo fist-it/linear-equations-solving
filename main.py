@@ -51,20 +51,46 @@ def LU(A):
     """
     LU decomposition of a matrix A
     """
-    n = A.shape[0]
-    L = np.zeros((n, n))
-    U = np.zeros((n, n))
+    p, l, u = lu(A)
+    return l, u
+    # n = A.shape[0]
+    # L = np.zeros((n, n))
+    # U = np.zeros((n, n))
+    #
+    # for i in range(n):
+    #     L[i, i] = 1
+    #     for j in range(i, n):
+    #         U[i, j] = A[i, j]
+    #         for k in range(i):
+    #             U[i, j] -= L[i, k] * U[k, j]
+    #     for j in range(i + 1, n):
+    #         L[j, i] = A[j, i]
+    #         for k in range(i):
+    #             L[j, i] -= L[j, k] * U[k, i]
+    #         L[j, i] /= U[i, i]
 
-    for i in range(n):
-        L[i, i] = 1
-        for j in range(i, n):
-            U[i, j] = A[i, j]
-            for k in range(i):
-                U[i, j] -= L[i, k] * U[k, j]
-        for j in range(i + 1, n):
-            L[j, i] = A[j, i]
-            for k in range(i):
-                L[j, i] -= L[j, k] * U[k, i]
-            L[j, i] /= U[i, i]
 
-    return L, U
+
+
+def main():
+    size = getMatrixSize()
+    A = getMatrixTaskA(size)
+    b = getVectorTaskA(size)
+
+    # print(A)
+    # print(b)
+
+    L, U = LU(A)
+    print(L)
+    print(U)
+
+    # Solve the system of equations
+    x = np.linalg.solve(A, b)
+    print(x)
+
+    # plt.plot(x)
+    # plt.show()
+
+
+if __name__ == "__main__":
+    main()
