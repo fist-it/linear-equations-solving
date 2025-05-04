@@ -76,6 +76,27 @@ def solveJacobi(A, b, tol=1e-9, max_iterations=1000):
     return x, jacobi_rnorm[:iter_count]
 
 
+def gauss_seidel(A, b, tol=1e-9, max_iter=1000):
+    n = len(b)
+    x = np.zeros_like(b, dtype=np.double)
+
+    for iteration in range(max_iter):
+        x_new = np.copy(x)
+
+        for i in range(n):
+            s1 = np.dot(A[i, :i], x_new[:i])
+            s2 = np.dot(A[i, i+1:], x[i+1:])
+            x_new[i] = (b[i] - s1 - s2) / A[i, i]
+
+        if np.linalg.norm(x_new - x, ord=np.inf) < tol:
+            return x_new
+
+        x = x_new
+
+    print('Osiągnięto maksymalną liczbę iteracji')
+    return x
+
+
 def solveGauss_Seidel(A, b, tol=1e-9, max_iterations=1000):
     """
     Solves the system of equations Ax = b using the Gauss-Seidel method
