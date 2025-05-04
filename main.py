@@ -1,95 +1,119 @@
 import numpy as np
-# import matplotlib.pyplot as plt
-from scipy.linalg import lu
-
-C = 9
-D = 7
-E = 7
-F = 7
-
-
-def getMatrixSize():
-    # index: 197797
-    """
-    Returns the size of the matrix based on students index number,
-    in my case 1297
-    """
-    return 1200 + 10 * C + D
-
-
-def getMatrixTaskA(size: int):
-    """
-    Returns matrix with five diagonals with
-    symmetrical values, a1, a2, a3
-    a1 = 5+e
-    a2 = a3 = -1
-    """
-    matrix = np.zeros((size, size))
-    a1 = 5 + E
-    a2 = -1
-    a3 = -1
-    for i in range(size):
-        matrix[i, i] = a1
-        if i + 1 < size:
-            matrix[i, i + 1] = a2
-            matrix[i + 1, i] = a2
-        if i + 2 < size:
-            matrix[i, i + 2] = a3
-            matrix[i + 2, i] = a3
-
-    return matrix
-
-
-def getVectorTaskA(size: int):
-    vector = np.zeros((size, 1))
-    for i in range(size):
-        vector[i] = np.sin(i * (F + 1))
-    return vector
-
-
-def LU(A):
-    """
-    LU decomposition of a matrix A
-    """
-    p, l, u = lu(A)
-    return l, u
-    # n = A.shape[0]
-    # L = np.zeros((n, n))
-    # U = np.zeros((n, n))
-    #
-    # for i in range(n):
-    #     L[i, i] = 1
-    #     for j in range(i, n):
-    #         U[i, j] = A[i, j]
-    #         for k in range(i):
-    #             U[i, j] -= L[i, k] * U[k, j]
-    #     for j in range(i + 1, n):
-    #         L[j, i] = A[j, i]
-    #         for k in range(i):
-    #             L[j, i] -= L[j, k] * U[k, i]
-    #         L[j, i] /= U[i, i]
-
-
+import matplotlib.pyplot as plt
+from solve import solveJacobi, solveGauss_Seidel, solveLU
+from data import getMatrixSize, getMatrixTaskA, getVectorTaskA, getMatrixTaskC
+import time
 
 
 def main():
     size = getMatrixSize()
+
+    # task A and B {{{
     A = getMatrixTaskA(size)
     b = getVectorTaskA(size)
 
-    # print(A)
-    # print(b)
-
-    L, U = LU(A)
-    print(L)
-    print(U)
-
-    # Solve the system of equations
     x = np.linalg.solve(A, b)
-    print(x)
 
-    # plt.plot(x)
-    # plt.show()
+    timer = time.time()
+    x_jacobi, jacobi_residuum = solveJacobi(A, b)
+    timer = time.time() - timer
+    jacobi_time = timer
+
+    timer = time.time()
+    x_gauss_seidel, gauss_residuum = solveGauss_Seidel(A, b)
+    timer = time.time() - timer
+    gauss_seidel_time = timer
+
+    print(f"solution from scipy shape: {x.shape}")
+    print(f"My jacobi function shape: {x_jacobi.shape}")
+    print(f"Gauss-Seidel solution shape: {x_gauss_seidel.shape}")
+
+    assert x.shape == x_jacobi.shape, \
+        "Shapes of x and x_jacobi do not match"
+    assert x.shape == x_gauss_seidel.shape, \
+        "Shapes of x and x_gauss_seidel do not match"
+
+    # Check if the solutions are close
+    assert np.allclose(
+        x, x_jacobi), "Solution jacobi does not match"
+    assert np.allclose(
+        x, x_gauss_seidel), "Solution gauss seidel does not match"
+
+    print(f"Jacobi Residuum length: {len(jacobi_residuum)}")
+    print(f"Gauss-Seidel Residuum length: {len(gauss_residuum)}")
+
+    print(f"Jacobi took {jacobi_time:.2f} seconds")
+    print(f"Gauss-Seidel took {gauss_seidel_time:.2f} seconds")
+
+    # Plotting the residuals
+    plt.plot(jacobi_residuum, label="Jacobi Residuum",
+             marker='o', linewidth=0.8)
+    plt.plot(gauss_residuum, label="Gauss-Seidel Residuum",
+             marker='s', linewidth=0.8)
+
+    plt.annotate(f"{jacobi_residuum[-1]:.2e}",
+                 (len(jacobi_residuum)-1, jacobi_residuum[-1]),
+                 textcoords="offset points", xytext=(-10, 10), ha='center')
+    plt.annotate(f"{gauss_residuum[-1]:.2e}",
+                 (len(gauss_residuum)-1, gauss_residuum[-1]),
+                 textcoords="offset points", xytext=(-10, 10), ha='center')
+
+    plt.yscale("log")
+    plt.grid(True, which="both", linestyle="--", linewidth=0.5)
+    plt.xlabel("Iteration")
+    plt.ylabel("Residual Norm")
+    plt.title("Residual Norms of Jacobi and Gauss-Seidel Methods")
+    plt.legend()
+    plt.show()
+    # }}}
+
+    # task C {{{
+    A = getMatrixTaskC(size)
+
+    timer = time.time()
+    x_jacobi, jacobi_residuum = solveJacobi(A, b)
+    timer = time.time() - timer
+    jacobi_time = timer
+    print(f"Jacobi took {jacobi_time:.2f} seconds")
+
+    # Solving with gauss method for non-diagonal dominant matrix takes
+    # around 40 seconds, disable if not needed
+    # timer = time.time()
+    # x_gauss_seidel, gauss_residuum = solveGauss_Seidel(A, b)
+    # timer = time.time() - timer
+    # gauss_seidel_time = timer
+    # print(f"Gauss-Seidel took {gauss_seidel_time:.2f} seconds")
+
+    print("Starting LU calculation")
+    timer = time.time()
+    x_lu, lu_residuum = solveLU(A, b)
+    timer = time.time() - timer
+    lu_time = timer
+    print(f"LU took {lu_time:.2f} seconds")
+
+    print(f"LU direct method residuum: {lu_residuum}")
+
+    # Plotting the residuals
+    plt.plot(jacobi_residuum, label="Jacobi Residuum",
+             marker='o', linewidth=0.8)
+    plt.plot(gauss_residuum, label="Gauss-Seidel Residuum",
+             marker='s', linewidth=0.8)
+
+    plt.annotate(f"{jacobi_residuum[-1]:.2e}",
+                 (len(jacobi_residuum)-1, jacobi_residuum[-1]),
+                 textcoords="offset points", xytext=(-10, 10), ha='center')
+    plt.annotate(f"{gauss_residuum[-1]:.2e}",
+                 (len(gauss_residuum)-1, gauss_residuum[-1]),
+                 textcoords="offset points", xytext=(-10, 10), ha='center')
+
+    plt.yscale("log")
+    plt.grid(True, which="both", linestyle="--", linewidth=0.5)
+    plt.xlabel("Iteration")
+    plt.ylabel("Residual Norm")
+    plt.title("Residual Norms of Jacobi and Gauss-Seidel Methods (Task C)")
+    plt.legend()
+    plt.show()
+    # }}}
 
 
 if __name__ == "__main__":
