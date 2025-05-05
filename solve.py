@@ -57,8 +57,6 @@ def solveJacobi(A, b, tol=1e-9, max_iterations=1000):
     U = np.triu(A, k=1)
 
     D_inv = np.linalg.inv(D)
-    M = -np.dot(D_inv, L + U)
-    w = np.dot(D_inv, b)
 
     r_norm = np.linalg.norm(np.dot(A, x) - b)
     jacobi_rnorm = np.array([r_norm]*max_iterations)
@@ -66,7 +64,7 @@ def solveJacobi(A, b, tol=1e-9, max_iterations=1000):
 
     while iter_count < max_iterations:
         jacobi_rnorm[iter_count] = r_norm
-        x_new = np.dot(M, x) + w
+        x_new = D_inv.dot(b - np.dot(L + U, x))
         r_norm = np.linalg.norm(np.dot(A, x_new) - b)
         x = x_new
         iter_count += 1
@@ -77,29 +75,26 @@ def solveJacobi(A, b, tol=1e-9, max_iterations=1000):
 
 
 def gauss_seidel(A, b, tol=1e-9, max_iter=1000):
+    n = len(b)
     x = np.zeros_like(b)
 
-    gauss_seidel_rnorm = np.array(
-        [np.linalg.norm(np.dot(A, x) - b)] * max_iter)
+    gauss_seidel_norms = np.zeros(max_iter)
     for iteration in range(max_iter):
         x_new = np.copy(x)
 
-        for i in range(len(b)):
-            # source:
-            # https://en.wikipedia.org/wiki/Gauss-Seidel_method#Element-based_formula
-            s1 = np.dot(A[i, :i], x_new[:i])  # first sum on formula TODO
-            s2 = np.dot(A[i, i+1:], x[i+1:])  # second sum on formula TODO
+        for i in range(n):
+            s1 = np.dot(A[i, :i], x_new[:i])
+            s2 = np.dot(A[i, i+1:], x[i+1:])
             x_new[i] = (b[i] - s1 - s2) / A[i, i]
-            r_norm = np.linalg.norm(x_new - x)  # residual norm
-            gauss_seidel_rnorm[iteration] = r_norm
 
-        if r_norm < tol:
-            return x_new, gauss_seidel_rnorm[:iteration+1], iteration+1
+        gauss_seidel_norms[iteration] = np.linalg.norm(x_new - x, ord=np.inf)
+        if gauss_seidel_norms[iteration] < tol:
+            return x_new, gauss_seidel_norms[:iteration + 1], iteration + 1
 
         x = x_new
 
     print('Osiągnięto maksymalną liczbę iteracji')
-    return x, gauss_seidel_rnorm[:iteration], iteration
+    return x, gauss_seidel_norms[:max_iter], max_iter
 
 
 def solveGauss_Seidel(A, b, tol=1e-9, max_iterations=1000):

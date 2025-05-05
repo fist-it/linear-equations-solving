@@ -123,6 +123,12 @@ obliczeniowo, ponieważ wymaga $O(n^3)$ operacji arytmetycznych.
 \subsection{Metody iteracyjne}
 Do obydwu metod iteracyjnych macierz $A$ powinna być macierzą
 przekątniowo dominującą.
+Macierz $A$ jest przekątniowo dominująca, jeśli dla każdego wiersza
+$A_{ii}$ zachodzi:
+\begin{equation}
+    |A_{ii}| > \sum_{j \neq i} |A_{ij}|
+\end{equation}
+
 \subsubsection{Metoda Jacobiego}
 Metoda Jacobiego jest jedną z najprostszych metod iteracyjnych. Polega na
 wyznaczeniu wektora $x$ w oparciu o poprzedni wektor $x^{(k)}$.
@@ -141,21 +147,85 @@ poprzedni wektor $x^{(k)}$ oraz aktualny wektor $x^{(k+1)}$.
 
 \section{Analiza wyników}
 
+\subsection{Poprawnie uwarunkowana macierz}
+
+Poniższe wyniki przedstawione są dla macierzy wygenerowanej zgodnie z wzorem
+(1), wg. którego macierz okazuje się być przekątniowo dominująca.
+
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{./graphs/residuals_task_a.png}
   \caption{Wykres reszt dla metody Jacobiego i Gaussa-Seidela}
+\end{figure}
+Krzywe z rys. 1 przedstawiają zbieżność obu metod iteracyjnych. Metoda 
+Gaussa-Seidela zbiega szybciej niż metoda Jacobiego, przez co potrzebowała
+ona jedynie 10 iteracji do osiągnięcia wyniku w granicach tolerancji
+($10^{-9}$), o 5 iteracji mniej niż metodzie Jacobiego. W tym przypadku metodzie 
+Gaussa-Seidela obliczenie wyniku zajęło \textbf{0.06} sekundy, a metodzie
+Jacobiego \textbf{0.09}.
 
+\subsection{Źle uwarunkowana macierz}
+W przypadku źle uwarunkowanej macierzy, która nie jest przekątniowo
+dominująca, zastosowanie metod iteracyjnych skutkuje brakiem
+ich zbieżności.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./graphs/residuals_task_c.png}
+  \caption{Wykres reszt dla metody Jacobiego i Gaussa-Seidela dla źle
+  uwarunkowanej macierzy}
+\end{figure}
+
+Na rys. 2 przedstawione są krzywe zbieżności dla źle uwarunkowanej
+macierzy. Jak widać, metoda Gaussa-Seidela rośnie szybciej niż metoda
+Jacobiego, lecz obydwie rosną wykładniczo. Dalsze iteracje powstrzymał
+odgórny limit iteracji, który został ustawiony na 1000.
+
+\subsection{Faktoryzacja LU}
+W przypadku rozwiązywania układu zawierającego źle uwarunkowaną macierz
+niemożliwe jest zastosowanie metod iteracyjnych. W takim przypadku
+zastosować można jedynie metodę bezpośrednią, która w tym przypadku
+zajęła \textbf{195.13} sekundy. Norma residuum wyniosła \textbf{$1.68*10^{-10}$}.
+
+\pagebreak
+\section{Porównanie czasów obliczeń}
+Przedstawione wyniki są czasami obliczeń dla macierzy dobrze
+uwarunkowanych. Dodatkowo dla pewności poprawnych wyników, dla każdej
+metody zwiekszono liczbę iteracji do 1000000.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./graphs/time_complexity_linear.png}
+  \caption{Czasy obliczeń w skali liniowej}
+\end{figure}
+
+Na rys. 3 przedstawione są czasy obliczeń dla każdej z metod 
+w skali liniowej. Jak widać, metoda Jacobiego jest znacznie wolniejsza
+od metody Gaussa-Seidela.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{./graphs/time_complexity.png}
+  \caption{Czasy obliczeń w skali logarytmicznej}
 \end{figure}
 
 \pagebreak
 
+\section{Podsumowanie}
+W projekcie przedstawione zostały trzy metody rozwiązywania układów równań
+liniowych. Metoda Jacobiego i metoda Gaussa-Seidela są metodami
+iteracyjnymi, które są stosunkowo proste w implementacji, lecz wymagają
+przekątniowo dominującej macierzy. W przypadku źle uwarunkowanej
+macierzy, która nie jest przekątniowo dominująca, metody te nie 
+zbiegają. Użycie metody bezpośredniej jest znacznie wolniejsze, lecz
+czasami niezbędne. 
+
 \begin{thebibliography}{9}
 \bibitem{LU decomposition}
 Geeks for Geeks (2023) \emph{LU Decomposition}, \url{https://www.geeksforgeeks.org/doolittle-algorithm-lu-decomposition/}.
-\bibitem{lamport94}
-Leslie Lamport (1994) \emph{\LaTeX: a document preparation system}, Addison
-Wesley, Massachusetts, 2nd ed.
+\bibitem{Iterative methods}
+Yousef Saad \emph{Iterative Methods for Sparse Linear Systems}.
 \end{thebibliography}
 
 \printbibliography

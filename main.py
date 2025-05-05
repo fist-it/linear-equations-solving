@@ -84,6 +84,12 @@ def main():
     gauss_seidel_time = timer
     print(f"Gauss-Seidel took {gauss_seidel_time:.2f} seconds")
 
+    print(f"Jacobi iterations: {jacobi_iterations}")
+    print(f"Gauss-Seidel iterations: {iterations}")
+
+    print(f"Jacobi Residuum length: {len(jacobi_residuum)}")
+    print(f"Gauss-Seidel Residuum length: {len(gauss_residuum)}")
+
     # Plotting the residuals
     plt.plot(jacobi_residuum, label="Jacobi Residuum",
              linewidth=0.8)
@@ -98,6 +104,7 @@ def main():
                  textcoords="offset points", xytext=(-10, 10), ha='center')
 
     plt.yscale("log")
+    plt.ylim(ymax=1e80)
     plt.grid(True, which="both", linestyle="--", linewidth=0.5)
     plt.xlabel("Iteration")
     plt.ylabel("Residual Norm")
@@ -107,6 +114,16 @@ def main():
     plt.show()
     # }}}
 
+# task D - residual norm of LU decomposition direct method
+
+    A = getMatrixTaskC(size)
+    b = getVectorTaskA(size)
+    timer = time.time()
+    x_lu, lu_residuum = solveLU(A, b)
+    timer = time.time() - timer
+    lu_time = timer
+    print(f"LU took {lu_time:.2f} seconds")
+    print(f"LU residuum: {lu_residuum:.2e}")
 
 if __name__ == "__main__":
     main()
