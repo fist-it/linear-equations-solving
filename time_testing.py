@@ -3,9 +3,8 @@ from solve import solveJacobi, solveGauss_Seidel, solveLU, gauss_seidel
 from data import getMatrixTaskA, getVectorTaskA
 import time
 
-
 def main():
-    sizes = range(100, 2001, 100)
+    sizes = range(100, 5001, 100)
 
     times_jacobi = []
     times_gauss_seidel = []
@@ -42,16 +41,6 @@ def main():
         print(f"Gauss-Seidel method for size {size} took {
             total_time:.4f} milliseconds")
 
-        # Uncomment the following lines to measure time for LU method
-        # # Measure time for LU Method
-        # start_time = time.time()
-        # solveLU(A, b)
-        # end_time = time.time()
-        # total_time = (end_time - start_time) * 1000
-        # times_lu.append(100 * (end_time - start_time))
-        # print(f"LU method for size {size} took {
-        #     total_time:.4f} milliseconds")
-
     # Plotting the results
     plt.figure(figsize=(10, 5))
     plt.plot(sizes, times_jacobi, label='Jacobi Method', marker='o')
@@ -68,8 +57,8 @@ def main():
     plt.grid()
     plt.yscale('log')
     plt.xticks(sizes, [str(size) for size in sizes])
+    plt.savefig("./sprawozdanie/graphs/time_complexity.png", dpi=300)
     plt.show()
-    plt.savefig("time_complexity_with_direct.png")
 
     return 0
 

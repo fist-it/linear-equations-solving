@@ -73,28 +73,33 @@ def solveJacobi(A, b, tol=1e-9, max_iterations=1000):
         if r_norm < tol:
             break
 
-    return x, jacobi_rnorm[:iter_count]
+    return x, jacobi_rnorm[:iter_count], iter_count
 
 
 def gauss_seidel(A, b, tol=1e-9, max_iter=1000):
-    n = len(b)
-    x = np.zeros_like(b, dtype=np.double)
+    x = np.zeros_like(b)
 
+    gauss_seidel_rnorm = np.array(
+        [np.linalg.norm(np.dot(A, x) - b)] * max_iter)
     for iteration in range(max_iter):
         x_new = np.copy(x)
 
-        for i in range(n):
-            s1 = np.dot(A[i, :i], x_new[:i])
-            s2 = np.dot(A[i, i+1:], x[i+1:])
+        for i in range(len(b)):
+            # source:
+            # https://en.wikipedia.org/wiki/Gauss-Seidel_method#Element-based_formula
+            s1 = np.dot(A[i, :i], x_new[:i])  # first sum on formula TODO
+            s2 = np.dot(A[i, i+1:], x[i+1:])  # second sum on formula TODO
             x_new[i] = (b[i] - s1 - s2) / A[i, i]
+            r_norm = np.linalg.norm(x_new - x)  # residual norm
+            gauss_seidel_rnorm[iteration] = r_norm
 
-        if np.linalg.norm(x_new - x, ord=np.inf) < tol:
-            return x_new
+        if r_norm < tol:
+            return x_new, gauss_seidel_rnorm[:iteration+1], iteration+1
 
         x = x_new
 
     print('Osiągnięto maksymalną liczbę iteracji')
-    return x
+    return x, gauss_seidel_rnorm[:iteration], iteration
 
 
 def solveGauss_Seidel(A, b, tol=1e-9, max_iterations=1000):
@@ -132,7 +137,7 @@ def solveGauss_Seidel(A, b, tol=1e-9, max_iterations=1000):
         x = x_new
         iter_count += 1
 
-    return x, gauss_seidel_rnorm[:iter_count]
+    return x, gauss_seidel_rnorm[:iter_count], iter_count
 
 
 def solveLU(A, b):

@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from solve import solveJacobi, solveGauss_Seidel, solveLU
+from solve import solveJacobi, solveLU, gauss_seidel
 from data import getMatrixSize, getMatrixTaskA, getVectorTaskA, getMatrixTaskC
 import time
 
@@ -15,18 +15,14 @@ def main():
     x = np.linalg.solve(A, b)
 
     timer = time.time()
-    x_jacobi, jacobi_residuum = solveJacobi(A, b)
+    x_jacobi, jacobi_residuum, jacobi_iterations = solveJacobi(A, b)
     timer = time.time() - timer
     jacobi_time = timer
 
     timer = time.time()
-    x_gauss_seidel, gauss_residuum = solveGauss_Seidel(A, b)
+    x_gauss_seidel, gauss_residuum, gauss_iterations = gauss_seidel(A, b)
     timer = time.time() - timer
     gauss_seidel_time = timer
-
-    print(f"solution from scipy shape: {x.shape}")
-    print(f"My jacobi function shape: {x_jacobi.shape}")
-    print(f"Gauss-Seidel solution shape: {x_gauss_seidel.shape}")
 
     assert x.shape == x_jacobi.shape, \
         "Shapes of x and x_jacobi do not match"
@@ -44,6 +40,9 @@ def main():
 
     print(f"Jacobi took {jacobi_time:.2f} seconds")
     print(f"Gauss-Seidel took {gauss_seidel_time:.2f} seconds")
+
+    print(f"Jacobi iterations: {jacobi_iterations}")
+    print(f"Gauss-Seidel iterations: {gauss_iterations}")
 
     # Plotting the residuals
     plt.plot(jacobi_residuum, label="Jacobi Residuum",
@@ -64,6 +63,7 @@ def main():
     plt.ylabel("Residual Norm")
     plt.title("Residual Norms of Jacobi and Gauss-Seidel Methods")
     plt.legend()
+    plt.savefig("./sprawozdanie/graphs/residuals_task_a.png", dpi=300)
     plt.show()
     # }}}
 
@@ -71,33 +71,24 @@ def main():
     A = getMatrixTaskC(size)
 
     timer = time.time()
-    x_jacobi, jacobi_residuum = solveJacobi(A, b)
+    x_jacobi, jacobi_residuum, jacobi_iterations = solveJacobi(A, b)
     timer = time.time() - timer
     jacobi_time = timer
     print(f"Jacobi took {jacobi_time:.2f} seconds")
 
     # Solving with gauss method for non-diagonal dominant matrix takes
     # around 40 seconds, disable if not needed
-    # timer = time.time()
-    # x_gauss_seidel, gauss_residuum = solveGauss_Seidel(A, b)
-    # timer = time.time() - timer
-    # gauss_seidel_time = timer
-    # print(f"Gauss-Seidel took {gauss_seidel_time:.2f} seconds")
-
-    print("Starting LU calculation")
     timer = time.time()
-    x_lu, lu_residuum = solveLU(A, b)
+    x_gauss_seidel, gauss_residuum, iterations = gauss_seidel(A, b)
     timer = time.time() - timer
-    lu_time = timer
-    print(f"LU took {lu_time:.2f} seconds")
-
-    print(f"LU direct method residuum: {lu_residuum}")
+    gauss_seidel_time = timer
+    print(f"Gauss-Seidel took {gauss_seidel_time:.2f} seconds")
 
     # Plotting the residuals
     plt.plot(jacobi_residuum, label="Jacobi Residuum",
-             marker='o', linewidth=0.8)
+             linewidth=0.8)
     plt.plot(gauss_residuum, label="Gauss-Seidel Residuum",
-             marker='s', linewidth=0.8)
+             linewidth=0.8)
 
     plt.annotate(f"{jacobi_residuum[-1]:.2e}",
                  (len(jacobi_residuum)-1, jacobi_residuum[-1]),
@@ -112,6 +103,7 @@ def main():
     plt.ylabel("Residual Norm")
     plt.title("Residual Norms of Jacobi and Gauss-Seidel Methods (Task C)")
     plt.legend()
+    plt.savefig("./sprawozdanie/graphs/residuals_task_c.png", dpi=300)
     plt.show()
     # }}}
 
