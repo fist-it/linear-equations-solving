@@ -49,7 +49,7 @@ moim przypadku mają one następujące wartości:
   \item $f = 7$
 \end{itemize}
 
-Macierz $A$ jest macierzą trójdiagonalną, a wektor $b$ jest wektorem
+Macierz $A$ jest macierzą wstęgową o szerokości pasma 5, a wektor $b$ jest wektorem
 jednostkowym. Macierz $A$ jest generowana w oparciu o następujący wzór:
 \begin{equation}
     A_{i,j} = \begin{cases}
@@ -122,8 +122,8 @@ gdzie diagonalna część macierzy $L$ jest równa 1. Metoda ta jest kosztowna
 obliczeniowo, ponieważ wymaga $O(n^3)$ operacji arytmetycznych.
 \subsection{Metody iteracyjne}
 Do obydwu metod iteracyjnych macierz $A$ powinna być macierzą
-przekątniowo dominującą.
-Macierz $A$ jest przekątniowo dominująca, jeśli dla każdego wiersza
+diagonalnie dominującą.
+Macierz $A$ jest diagonalnie dominująca, jeśli dla każdego wiersza
 $A_{ii}$ zachodzi:
 \begin{equation}
     |A_{ii}| > \sum_{j \neq i} |A_{ij}|
@@ -150,7 +150,7 @@ poprzedni wektor $x^{(k)}$ oraz aktualny wektor $x^{(k+1)}$.
 \subsection{Poprawnie uwarunkowana macierz}
 
 Poniższe wyniki przedstawione są dla macierzy wygenerowanej zgodnie z wzorem
-(1), wg. którego macierz okazuje się być przekątniowo dominująca.
+(1), wg. którego macierz okazuje się być diagonalnie dominująca.
 
 
 \begin{figure}[H]
@@ -166,7 +166,7 @@ Gaussa-Seidela obliczenie wyniku zajęło \textbf{0.06} sekundy, a metodzie
 Jacobiego \textbf{0.09}.
 
 \subsection{Źle uwarunkowana macierz}
-W przypadku źle uwarunkowanej macierzy, która nie jest przekątniowo
+W przypadku źle uwarunkowanej macierzy, która nie jest diagonalnie
 dominująca, zastosowanie metod iteracyjnych skutkuje brakiem
 ich zbieżności.
 
@@ -200,9 +200,14 @@ metody zwiekszono liczbę iteracji do 1000000.
   \caption{Czasy obliczeń w skali liniowej}
 \end{figure}
 
-Na rys. 3 przedstawione są czasy obliczeń dla każdej z metod 
-w skali liniowej. Jak widać, metoda Jacobiego jest znacznie wolniejsza
-od metody Gaussa-Seidela.
+Na rys. 4 przedstawione są czasy obliczeń dla każdej z metod 
+w skali logarytmicznej. Jak widać, metoda Jacobiego jest znacznie wolniejsza
+od metody Gaussa-Seidela. Mimo wszystko obydwie metody iteracyjne wydają się
+podobnie szybkie w porównaniu do metody bezpośredniej. Metoda bezpośrednia
+\textbf{znacznie} przewyższa czasem obliczeń metody iteracyjne, co widać na rys.
+3 posiadającym skalę liniową. Metoda bezpośrednia jest jednak w stanie obliczyć
+układy równań z macierzami źle uwarunkowanymi, w przeciwieńswtwie do metod
+iteracyjnych.
 
 \begin{figure}[H]
   \centering
@@ -216,8 +221,8 @@ od metody Gaussa-Seidela.
 W projekcie przedstawione zostały trzy metody rozwiązywania układów równań
 liniowych. Metoda Jacobiego i metoda Gaussa-Seidela są metodami
 iteracyjnymi, które są stosunkowo proste w implementacji, lecz wymagają
-przekątniowo dominującej macierzy. W przypadku źle uwarunkowanej
-macierzy, która nie jest przekątniowo dominująca, metody te nie 
+diagonalnie dominującej macierzy. W przypadku źle uwarunkowanej
+macierzy, która nie jest diagonalnie dominująca, metody te nie 
 zbiegają. Użycie metody bezpośredniej jest znacznie wolniejsze, lecz
 czasami niezbędne. 
 

@@ -48,6 +48,8 @@ def solveJacobi(A, b, tol=1e-9, max_iterations=1000):
 
     Returns:
     - x: solution vector with same shape as b
+    - jacobi_rnorm: array of residual norms at each iteration
+    - iter_count: number of iterations performed
     """
 
     x = np.zeros_like(b)
@@ -109,6 +111,8 @@ def solveGauss_Seidel(A, b, tol=1e-9, max_iterations=1000):
 
     Returns:
     - x: solution vector with same shape as b
+    - gauss_seidel_rnorm: array of residual norms at each iteration
+    - iter_count: number of iterations performed
     """
 
     x = np.zeros_like(b)
@@ -145,6 +149,7 @@ def solveLU(A, b):
 
     Returns:
     - x: solution vector with same shape as b
+    - r_norm: residual norm
     """
 
     L, U = LU(A)
