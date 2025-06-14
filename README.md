@@ -1,8 +1,6 @@
 ---
 author:
 - Franciszek Fabiński - s197797
-bibliography:
-- references.bib
 date: 2025-06-14
 title: |
   Metody numeryczne, projekt 2:\
@@ -129,7 +127,7 @@ Poniższe wyniki przedstawione są dla macierzy wygenerowanej zgodnie z
 wzorem (1), wg. którego macierz okazuje się być diagonalnie dominująca.
 
 ![Wykres reszt dla metody Jacobiego i
-Gaussa-Seidela](./graphs/residuals_task_a.png){width="80%"}
+Gaussa-Seidela](./graphs/residuals_task_a.png)
 
 Krzywe z rys. 1 przedstawiają zbieżność obu metod iteracyjnych. Metoda
 Gaussa-Seidela zbiega szybciej niż metoda Jacobiego, przez co
@@ -145,7 +143,7 @@ dominująca, zastosowanie metod iteracyjnych skutkuje brakiem ich
 zbieżności.
 
 ![Wykres reszt dla metody Jacobiego i Gaussa-Seidela dla źle
-uwarunkowanej macierzy](./graphs/residuals_task_c.png){width="80%"}
+uwarunkowanej macierzy](./graphs/residuals_task_c.png)
 
 Na rys. 2 przedstawione są krzywe zbieżności dla źle uwarunkowanej
 macierzy. Jak widać, metoda Gaussa-Seidela rośnie szybciej niż metoda
@@ -166,7 +164,7 @@ uwarunkowanych. Dodatkowo dla pewności poprawnych wyników, dla każdej
 metody zwiekszono liczbę iteracji do 1000000.
 
 ![Czasy obliczeń w skali
-liniowej](./graphs/time_complexity_linear.png){width="80%"}
+liniowej](./graphs/time_complexity_linear.png)
 
 Na rys. 4 przedstawione są czasy obliczeń dla każdej z metod w skali
 logarytmicznej. Jak widać, metoda Jacobiego jest znacznie wolniejsza od
@@ -178,7 +176,7 @@ jednak w stanie obliczyć układy równań z macierzami źle uwarunkowanymi,
 w przeciwieńswtwie do metod iteracyjnych.
 
 ![Czasy obliczeń w skali
-logarytmicznej](./graphs/time_complexity.png){width="80%"}
+logarytmicznej](./graphs/time_complexity.png)
 
 # Podsumowanie
 
@@ -189,9 +187,3 @@ diagonalnie dominującej macierzy. W przypadku źle uwarunkowanej
 macierzy, która nie jest diagonalnie dominująca, metody te nie zbiegają.
 Użycie metody bezpośredniej jest znacznie wolniejsze, lecz czasami
 niezbędne.
-
-::: thebibliography
-9 Geeks for Geeks (2023) *LU Decomposition*,
-<https://www.geeksforgeeks.org/doolittle-algorithm-lu-decomposition/>.
-Yousef Saad *Iterative Methods for Sparse Linear Systems*.
-:::
